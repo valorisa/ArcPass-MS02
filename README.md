@@ -50,7 +50,8 @@ lspci -nn | grep -i intel
 ```
 
 Cherchez la ligne correspondant à votre Arc Pro B50 (ex: [8086:abcd]).
-Étape 3 : Finalisation
+
+### Étape 3 : Finalisation
 Éditez le fichier de configuration VFIO avec vos IDs :
 
 ```bash
@@ -60,6 +61,7 @@ reboot
 ```
 
 🖥 Configuration de la VM (GUI Proxmox)
+
 Pour des performances optimales avec l'Intel Arc Pro B50 :
  * OS Type : Linux (Kernel 6.8+) ou Windows 11.
  * Machine : q35.
