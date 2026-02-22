@@ -1,50 +1,80 @@
-# ArcPass-MS02 🚀
+# ArcPass-MS02 🚀 
 
-**ArcPass-MS02** est un script d'automatisation conçu pour configurer le GPU Passthrough d'une carte **Intel Arc Pro B50** sur un mini-PC **Minisforum MS-02 Ultra** tournant sous Proxmox VE.
+![Proxmox](https://img.shields.io/badge/Proxmox-VE_8.x-orange?logo=proxmox)
+![Intel](https://img.shields.io/badge/GPU-Intel_Arc_Pro_B50-blue?logo=intel)
+![Hardware](https://img.shields.io/badge/Hardware-Minisforum_MS--02_Ultra-white)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-Ce projet optimise l'utilisation de l'architecture Intel Battlemage pour l'IA, le transcodage vidéo et le cloud gaming personnel.
+**ArcPass-MS02** est une solution "One-Click" (ou presque) pour automatiser le **GPU Passthrough** d'une carte **Intel Arc Pro B50** (Architecture Battlemage) sur un nœud **Proxmox VE**. 
+
+Optimisé spécifiquement pour le châssis compact du **Minisforum MS-02 Ultra**, ce script configure le noyau, isole les périphériques et prépare l'environnement pour l'IA, le transcodage AV1 et le Cloud Gaming.
+
+---
+
+## ✨ Points forts
+* 🛠 **Automatisation Kernel** : Configure GRUB et les modules VFIO sans erreur manuelle.
+* ⚡ **Optimisation Battlemage** : Prise en charge native des nouveaux drivers `xe`.
+* 🛡 **Sécurité** : Sauvegarde automatique de vos fichiers de configuration (`.bak`).
 
 ## 🛠 Prérequis
 
-- **Matériel** : Minisforum MS-02 Ultra + Intel Arc Pro B50 (ou série B).
-- **BIOS** : 
-  - VT-d : `Enabled`
-  - SR-IOV : `Enabled`
-  - ReBAR (Resizable BAR) : `Enabled`
-  - Above 4G Decoding : `Enabled`
-- **OS** : Proxmox VE 8.x ou supérieur.
+### 1. Configuration du BIOS (Crucial)
+Accédez au BIOS de votre MS-02 Ultra et activez les options suivantes :
+| Paramètre | État |
+| :--- | :--- |
+| **VT-d** | `Enabled` |
+| **SR-IOV Support** | `Enabled` |
+| **Above 4G Decoding** | `Enabled` |
+| **Resizable BAR (ReBAR)** | `Enabled` |
+| **Primary Display** | `Auto` or `IGFX` |
 
-## 🚀 Installation rapide
-
-1. Clonez le dépôt sur votre hôte Proxmox :
-   ```bash
-   git clone https://github.com/valorisa/ArcPass-MS02.git
-   cd ArcPass-MS02
-
- * Rendez le script exécutable :
-   chmod +x setup_passthrough.sh
-
- * Exécutez le script en tant que root :
-   ./setup_passthrough.sh
-
-⚙️ Configuration Post-Installation
-Une fois le script exécuté :
- * Trouvez les IDs de votre GPU :
-   lspci -nn | grep -i intel
-
-   Notez les codes entre crochets, ex: [8086:abcd].
- * Créez le fichier d'ID VFIO :
-   echo "options vfio-pci ids=8086:votre_id_gpu,8086:votre_id_audio" > /etc/modprobe.d/vfio.conf
-
- * Redémarrez l'hôte.
-🖥 Configuration de la VM (Proxmox GUI)
-Pour que la carte fonctionne dans votre VM :
- * Machine : q35
- * BIOS : OVMF (UEFI)
- * Add PCI Device : Sélectionnez l'Intel Arc B50.
- * Options à cocher : All Functions, Primary GPU (si pas de GPU virtuel), ROM-Bar, PCI-Express.
-
-📄 Licence
-Ce projet est sous licence MIT. Libre à vous de l'utiliser et de le modifier.
+### 2. Système d'exploitation
+- Proxmox VE 8.1 ou version ultérieure (Kernel 6.5+ recommandé).
 
 ---
+
+## 🚀 Installation & Usage
+
+### Étape 1 : Clonage et exécution
+```bash
+git clone [https://github.com/valorisa/ArcPass-MS02.git](https://github.com/valorisa/ArcPass-MS02.git)
+cd ArcPass-MS02
+chmod +x setup_passthrough.sh
+sudo ./setup_passthrough.sh
+```
+
+### Étape 2 : Identification du matériel
+Une fois le script terminé, identifiez vos IDs PCI :
+```bash
+lspci -nn | grep -i intel
+```
+
+Cherchez la ligne correspondant à votre Arc Pro B50 (ex: [8086:abcd]).
+Étape 3 : Finalisation
+Éditez le fichier de configuration VFIO avec vos IDs :
+
+```bash
+echo "options vfio-pci ids=8086:VOTRE_ID_GPU,8086:VOTRE_ID_AUDIO" > /etc/modprobe.d/vfio.conf
+update-initramfs -u
+reboot
+```
+
+🖥 Configuration de la VM (GUI Proxmox)
+Pour des performances optimales avec l'Intel Arc Pro B50 :
+ * OS Type : Linux (Kernel 6.8+) ou Windows 11.
+ * Machine : q35.
+ * BIOS : OVMF (UEFI).
+ * Hardware Add : PCI Device -> Sélectionnez la B50.
+   * ✅ All Functions
+   * ✅ Primary GPU
+   * ✅ ROM-Bar
+   * ✅ PCI-Express
+
+⚠️ Dépannage (Troubleshooting)
+ * Code 43 (Windows) : Assurez-vous que le paramètre PCI-Express est coché dans la config matérielle de la VM.
+ * Performances faibles : Vérifiez que le Resizable BAR est bien activé dans le BIOS ; les cartes Intel Arc en dépendent pour la gestion de la mémoire.
+ * L'hôte ne démarre plus : Si vous avez blacklisted l'iGPU par erreur, utilisez l'accès SSH pour restaurer /etc/default/grub.bak.
+
+## 📄 Licence
+Distribué sous licence MIT. Voir LICENSE pour plus d'informations.
+
