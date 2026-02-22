@@ -37,7 +37,7 @@ Accédez au BIOS de votre MS-02 Ultra et activez les options suivantes :
 
 ### Étape 1 : Clonage et exécution
 ```bash
-git clone [https://github.com/valorisa/ArcPass-MS02.git](https://github.com/valorisa/ArcPass-MS02.git)
+git clone https://github.com/valorisa/ArcPass-MS02.git
 cd ArcPass-MS02
 chmod +x setup_passthrough.sh
 sudo ./setup_passthrough.sh
