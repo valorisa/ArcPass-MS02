@@ -18,7 +18,7 @@ Ce projet optimise l'utilisation de l'architecture Intel Battlemage pour l'IA, l
 
 1. Clonez le dépôt sur votre hôte Proxmox :
    ```bash
-   git clone [https://github.com/votre-pseudo/ArcPass-MS02.git](https://github.com/votre-pseudo/ArcPass-MS02.git)
+   git clone https://github.com/valorisa/ArcPass-MS02.git
    cd ArcPass-MS02
 
  * Rendez le script exécutable :
